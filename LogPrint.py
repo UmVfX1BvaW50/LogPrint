@@ -10,16 +10,23 @@ def insert_print_statements(file_path):
         class Visitor(ast.NodeVisitor):
             def visit_FunctionDef(self, node):
                 # 插入代码
-                content = "print('function " + node.name + " in " + file_path + " be called!!!')"
-                print_statement = ast.parse(content)
-                node.body.insert(0, print_statement.body[0])
-                # 打印插入信息
-                print("File: ", file_path)
-                print("Line: ", node.lineno)
-                print("Insert content: ", content)
-                print()
-                # 将插入信息添加到DataFrame中
-                table_data.loc[len(table_data)] = [file_path, node.lineno, content]
+                try:
+                    content = "print('function " + node.name + " in " + file_path + " be called!!!')"
+                    print_statement = ast.parse(content)
+                    node.body.insert(0, print_statement.body[0])
+                    # 打印插入信息
+                    print("File: ", file_path)
+                    print("Line: ", node.lineno)
+                    print("Insert content: ", content)
+                    print()
+                    # 将插入信息添加到DataFrame中
+                    table_data.loc[len(table_data)] = [file_path, node.lineno, content]
+                except :
+                    # 打印错误信息
+                    err_info = "Error inserting code in " + file_path
+                    print(err_info)
+                    err = open('error.txt', "a")
+                    err.write(err_info+'\n')
 
         visitor = Visitor()
         visitor.visit(tree)
